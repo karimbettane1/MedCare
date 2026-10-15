@@ -22,7 +22,7 @@ import Chat from "./Pages/Chat";
 function App() {
   return (
     <div className="App">
-      <Router basename="/Health-Plus">
+      <Router basename={process.env.PUBLIC_URL || "/"}>
         <Routes>
           <Route path="/" element={<Home />} />
           <Route path="/legal" element={<Legal />} />
