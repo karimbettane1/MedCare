@@ -1,7 +1,7 @@
 {
   "files": {
-    "main.css": "/MedCare/static/css/main.29c2d78d.css",
-    "main.js": "/MedCare/static/js/main.582e1bee.js",
+    "main.css": "/MedCare/static/css/main.f2e2df2d.css",
+    "main.js": "/MedCare/static/js/main.eabaab60.js",
     "static/media/profile-2.png": "/MedCare/static/media/profile-2.4752a9db34458eeffcfa.png",
     "static/media/profile-1.png": "/MedCare/static/media/profile-1.0261bb4efe7a9075c56a.png",
     "static/media/doctor-group.png": "/MedCare/static/media/doctor-group.01394386d8270bd40bc1.png",
@@ -9,12 +9,10 @@
     "static/media/profile-3.png": "/MedCare/static/media/profile-3.530bb2fd7ece3dd3b3be.png",
     "static/media/doctor-book-appointment.png": "/MedCare/static/media/doctor-book-appointment.edb3f4ac282ff3fefaec.png",
     "static/media/profile-4.png": "/MedCare/static/media/profile-4.3c44185ab9c84614038f.png",
-    "index.html": "/MedCare/index.html",
-    "main.29c2d78d.css.map": "/MedCare/static/css/main.29c2d78d.css.map",
-    "main.582e1bee.js.map": "/MedCare/static/js/main.582e1bee.js.map"
+    "index.html": "/MedCare/index.html"
   },
   "entrypoints": [
-    "static/css/main.29c2d78d.css",
-    "static/js/main.582e1bee.js"
+    "static/css/main.f2e2df2d.css",
+    "static/js/main.eabaab60.js"
   ]
 }
