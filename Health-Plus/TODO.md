@@ -33,3 +33,7 @@
 - [x] UI: refonte professionnelle de AppointmentFormPage
 - [x] UI: améliorer structure/ergonomie de AppointmentForm
 - [x] UI: moderniser AppointmentForm.css (responsive + accessibilité visuelle)
+- [x] Sécurité: conserver le jeton Sanctum à la connexion (`localStorage.token`) et refuser une réponse sans jeton
+- [x] Sécurité: `api.js` envoie `Authorization: Bearer` et purge la session locale sur 401
+- [x] Sécurité: `handleLogout` appelle `POST /auth/logout` (révocation serveur) avant `localStorage.clear()`
+- [x] Sécurité: mot de passe minimum 8 caractères (inscription + réinitialisation)

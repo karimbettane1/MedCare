@@ -6,21 +6,22 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Http;
+use Illuminate\Support\Facades\Log;
 
 class ChatController extends Controller
 {
     public function chat(Request $request): JsonResponse
     {
         $validated = $request->validate([
-            'messages' => ['required', 'array', 'min:1'],
+            'messages' => ['required', 'array', 'min:1', 'max:30'],
             'messages.*.role' => ['required', 'string', 'in:system,user,assistant'],
-            'messages.*.content' => ['required', 'string'],
-            'model' => ['nullable', 'string'],
+            'messages.*.content' => ['required', 'string', 'max:4000'],
+            'model' => ['nullable', 'string', 'max:100'],
             'temperature' => ['nullable', 'numeric', 'min:0', 'max:2'],
-            'max_tokens' => ['nullable', 'integer', 'min:1', 'max:4000'],
+            'max_tokens' => ['nullable', 'integer', 'min:1', 'max:1000'],
         ]);
 
-        $apiKey = env('GROQ_API_KEY');
+        $apiKey = config('services.groq.key');
 
         if (!$apiKey) {
             $lastUserMessage = collect($validated['messages'] ?? [])
@@ -45,28 +46,27 @@ class ChatController extends Controller
         }
 
         $response = Http::withToken($apiKey)
-            ->withoutVerifying()
             ->acceptJson()
             ->post('https://api.groq.com/openai/v1/chat/completions', [
-                'model' => $validated['model'] ?? 'openai/gpt-oss-120b',
+                'model' => config('services.groq.model'),
                 'messages' => $validated['messages'],
                 'temperature' => $validated['temperature'] ?? 0.01,
-                'max_tokens' => $validated['max_tokens'] ?? 1000,
+                'max_tokens' => $validated['max_tokens'] ?? 500,
             ]);
 
         if (!$response->successful()) {
             // Fallback OpenRouter if Groq key/model fails or provider unavailable
-            $openRouterKey = env('OPENROUTER_API_KEY');
+            $openRouterKey = config('services.openrouter.key');
             if ($openRouterKey) {
-                $fallback = Http::withoutVerifying()->withHeaders([
+                $fallback = Http::withHeaders([
                     'Authorization' => 'Bearer ' . $openRouterKey,
                     'HTTP-Referer' => config('app.url'),
-                    'X-Title' => config('app.name', 'Health Plus'),
+                    'X-Title' => config('app.name', 'MedCare'),
                 ])->acceptJson()->post('https://openrouter.ai/api/v1/chat/completions', [
-                    'model' => 'openai/gpt-3.5-turbo',
+                    'model' => config('services.openrouter.model'),
                     'messages' => $validated['messages'],
                     'temperature' => $validated['temperature'] ?? 0.2,
-                    'max_tokens' => $validated['max_tokens'] ?? 800,
+                    'max_tokens' => $validated['max_tokens'] ?? 500,
                 ]);
 
                 if ($fallback->successful()) {
@@ -87,10 +87,15 @@ class ChatController extends Controller
                 }
             }
 
+            // Le détail de l'erreur amont (quota, modèle, message interne) reste côté serveur.
+            Log::warning('Appel Groq infructueux.', [
+                'status' => $response->status(),
+                'body' => $response->json(),
+            ]);
+
             return response()->json([
                 'message' => 'Erreur lors de l’appel au service IA.',
-                'details' => $response->json(),
-            ], $response->status());
+            ], 502);
         }
 
         $data = $response->json();
@@ -98,9 +103,10 @@ class ChatController extends Controller
         $assistantText = data_get($data, 'choices.0.message.content');
 
         if (!$assistantMessage || !is_string($assistantText) || trim($assistantText) === '') {
+            Log::warning('Réponse IA invalide.', ['body' => $data]);
+
             return response()->json([
                 'message' => 'Réponse invalide du service IA.',
-                'details' => $data,
             ], 502);
         }
 

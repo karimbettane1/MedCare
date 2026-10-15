@@ -89,11 +89,11 @@ function ResetPassword() {
             <input
               type="password"
               name="password"
-              placeholder="Minimum 6 caractères"
+              placeholder="Minimum 8 caractères"
               value={formData.password}
               onChange={handleChange}
               required
-              minLength={6}
+              minLength={8}
             />
           </div>
 
@@ -106,7 +106,7 @@ function ResetPassword() {
               value={formData.password_confirmation}
               onChange={handleChange}
               required
-              minLength={6}
+              minLength={8}
             />
           </div>
 

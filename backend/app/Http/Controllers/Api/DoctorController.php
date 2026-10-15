@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
+use App\Models\Appointment;
 use App\Models\Doctor;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
@@ -46,6 +47,31 @@ class DoctorController extends Controller
         $validated = $request->validate([
             'rating' => ['required', 'integer', 'min:1', 'max:5'],
         ]);
+
+        $user = $request->user();
+
+        if ($user->role !== 'patient') {
+            return response()->json([
+                'message' => 'Seuls les patients peuvent évaluer un médecin.',
+            ], 403);
+        }
+
+        // Une évaluation par consultation : sans cela, n'importe qui peut gonfler les étoiles.
+        $consultation = Appointment::query()
+            ->where('doctor_id', $doctor->id)
+            ->where('patient_id', $user->id)
+            ->whereIn('status', ['accepted', 'completed'])
+            ->whereNull('rating')
+            ->latest('appointment_datetime')
+            ->first();
+
+        if (! $consultation) {
+            return response()->json([
+                'message' => "Vous ne pouvez évaluer ce médecin qu'après une consultation, et une fois par consultation.",
+            ], 403);
+        }
+
+        $consultation->update(['rating' => (int) $validated['rating']]);
 
         $currentReviews = (int) $doctor->reviews_count;
         $currentStars = (float) $doctor->stars;

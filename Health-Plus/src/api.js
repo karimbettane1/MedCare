@@ -37,6 +37,12 @@ async function request(endpoint, options = {}) {
         throw new Error(`Invalid response format from server (Received non-JSON). URL: ${url}, Status: ${response.status}`);
       }
 
+      if (response.status === 401 && token) {
+        // Jeton expiré ou révoqué : on purge la session locale au lieu de laisser
+        // l'interface croire que l'utilisateur est encore connecté.
+        ["token", "userId", "userType", "doctorId"].forEach((key) => localStorage.removeItem(key));
+      }
+
       if (!response.ok) {
         const validationErrors = data?.errors
           ? Object.values(data.errors).flat().join(" ")
@@ -96,6 +102,11 @@ export const api = {
     request("/auth/login", {
       method: "POST",
       body: JSON.stringify(body),
+    }),
+
+  logout: () =>
+    request("/auth/logout", {
+      method: "POST",
     }),
 
   forgotPassword: (body) =>

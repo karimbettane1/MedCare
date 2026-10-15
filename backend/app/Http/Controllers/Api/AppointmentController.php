@@ -87,14 +87,14 @@ class AppointmentController extends Controller
     }
     public function index(Request $request): JsonResponse
     {
+        $user = $request->user();
         $query = Appointment::query()->with(['patient', 'doctor.user']);
 
-        if ($request->filled('patient_id')) {
-            $query->where('patient_id', (int) $request->input('patient_id'));
-        }
-
-        if ($request->filled('doctor_id')) {
-            $query->where('doctor_id', (int) $request->input('doctor_id'));
+        // Un patient ne voit que ses rendez-vous, un médecin que ceux qui lui sont adressés.
+        if ($user->role === 'doctor') {
+            $query->where('doctor_id', $user->doctorProfile?->id ?? 0);
+        } else {
+            $query->where('patient_id', $user->id);
         }
 
         if ($request->filled('status') && $request->string('status')->toString() !== 'all') {
@@ -126,8 +126,15 @@ class AppointmentController extends Controller
 
     public function store(Request $request): JsonResponse
     {
+        $user = $request->user();
+
+        if ($user->role !== 'patient') {
+            return response()->json([
+                'message' => 'Seuls les patients peuvent prendre un rendez-vous.',
+            ], 403);
+        }
+
         $validated = $request->validate([
-            'patient_id' => ['required', 'integer', 'exists:users,id'],
             'doctor_id' => ['required', 'integer', 'exists:doctors,id'],
             'appointment_datetime' => ['required', 'date_format:Y-m-d H:i:s'],
             'reason' => ['nullable', 'string', 'max:255'],
@@ -151,7 +158,7 @@ class AppointmentController extends Controller
 
         // Transaction + verrouillage de la ligne (ou du gap) pour empêcher
         // deux patients de réserver simultanément le même créneau chez le même médecin.
-        $conflict = DB::transaction(function () use ($validated, $slotDateTime) {
+        $conflict = DB::transaction(function () use ($validated, $slotDateTime, $user) {
             $alreadyBooked = Appointment::query()
                 ->where('doctor_id', $validated['doctor_id'])
                 ->where('appointment_datetime', $slotDateTime)
@@ -165,6 +172,7 @@ class AppointmentController extends Controller
 
             Appointment::create([
                 ...$validated,
+                'patient_id' => $user->id,
                 'appointment_datetime' => $slotDateTime->toDateTimeString(),
                 'status' => 'pending',
             ]);
@@ -196,6 +204,18 @@ class AppointmentController extends Controller
             'status' => ['required', 'in:pending,accepted,rejected,completed,cancelled'],
         ]);
 
+        $user = $request->user();
+        $isAssignedDoctor = $user->role === 'doctor'
+            && (int) $user->doctorProfile?->id === (int) $appointment->doctor_id;
+        $isConcernedPatient = (int) $user->id === (int) $appointment->patient_id;
+
+        // Le médecin assigné gère le rendez-vous ; le patient peut seulement l'annuler.
+        if (! $isAssignedDoctor && ! ($isConcernedPatient && $validated['status'] === 'cancelled')) {
+            return response()->json([
+                'message' => 'Vous ne pouvez pas modifier ce rendez-vous.',
+            ], 403);
+        }
+
         $appointment->update([
             'status' => $validated['status'],
         ]);
@@ -209,11 +229,10 @@ class AppointmentController extends Controller
     public function rate(Request $request, Appointment $appointment): JsonResponse
     {
         $validated = $request->validate([
-            'patient_id' => ['required', 'integer', 'exists:users,id'],
             'rating' => ['required', 'integer', 'min:1', 'max:5'],
         ]);
 
-        if ((int) $appointment->patient_id !== (int) $validated['patient_id']) {
+        if ((int) $appointment->patient_id !== (int) $request->user()->id) {
             return response()->json([
                 'message' => 'Vous ne pouvez pas noter ce rendez-vous.',
             ], 403);

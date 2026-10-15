@@ -31,6 +31,13 @@ function Login() {
         return;
       }
 
+      if (!user.token) {
+        toast.error("Jeton d'authentification absent de la réponse du serveur.");
+        return;
+      }
+
+      // Le jeton Sanctum est la seule preuve d'identité acceptée par l'API.
+      localStorage.setItem("token", user.token);
       localStorage.setItem("userId", String(user.id));
       localStorage.setItem("userType", user.role);
       localStorage.setItem("userName", user.name || "");
@@ -45,14 +52,8 @@ function Login() {
         navigate("/patient-dashboard");
       }
     } catch (error) {
-      const msg = error?.message || "Échec de connexion";
-      if (msg.toLowerCase().includes("introuvable")) {
-        toast.error("Utilisateur introuvable.");
-      } else if (msg.toLowerCase().includes("mot de passe")) {
-        toast.error("Mot de passe incorrect.");
-      } else {
-        toast.error(msg);
-      }
+      // Le serveur renvoie déjà un message FR générique (pas d'énumération de comptes).
+      toast.error(error?.message || "Échec de connexion");
     }
   };
 

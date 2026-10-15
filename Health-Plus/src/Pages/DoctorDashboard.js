@@ -144,7 +144,12 @@ function DoctorDashboard() {
     }, 0);
   }, [medicalRecords]);
 
-  const handleLogout = () => {
+  const handleLogout = async () => {
+    try {
+      await api.logout();
+    } catch (error) {
+      // Réseau indisponible : le jeton est supprimé localement de toute façon.
+    }
     localStorage.clear();
     navigate("/login");
   };
@@ -528,7 +533,7 @@ function DoctorDashboard() {
         </form>
 
       </section>
-
+
     </div>
   );
 }

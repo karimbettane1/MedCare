@@ -53,3 +53,18 @@
 - [x] Tests: happy path, doublon séquentiel (409), concurrence parallèle (1 seul 201), créneaux invalides (422), date passée (422)
 - [x] Vérifié dans le navigateur + build React "Compiled successfully"
 
+## Sécurité - durcissement de l'API et du front
+- [x] Auth Sanctum : `login`/`register` émettent un jeton Bearer, `POST /auth/logout` le révoque
+- [x] `routes/api.php` : public limité à l'auth + `GET /doctors`, tout le reste derrière `auth:sanctum`
+- [x] Authorization par rôle : rendez-vous et dossiers médicaux filtrés par identité réelle (fin des IDOR sur `patient_id`/`doctor_id`)
+- [x] `updateStatus` réservé au médecin concerné (et patient pour annulation), notation d'un médecin limitée à une fois par consultation validée
+- [x] Validation mot de passe `min:8` côté serveur et côté formulaire (inscription, réinitialisation)
+- [x] Message d'erreur d'authentification générique (fin de l'énumération d'emails)
+- [x] Rate limiting : login 5/min, register 10/h, forgot/reset 5/min, chat 10/min, API 60/min (réponses 429 en français)
+- [x] CORS restreint aux origines déclarées dans `FRONTEND_URLS`, en-têtes explicites, `max_age` 1 h
+- [x] Middleware `SecurityHeaders` : nosniff, `X-Frame-Options DENY`, Referrer-Policy, Permissions-Policy, `Cache-Control: no-store` sur `/api/*`
+- [x] `bootstrap/app.php` : erreurs JSON pour `/api/*` (fin du 500 « Route [login] not defined »)
+- [x] `/chat` : clés lues via `config('services.*')`, bornes de messages/tokens, TLS vérifié (retraits des `withoutVerifying()`), détails de l' upstream journalisés côté serveur seulement
+- [x] `.env.example` nettoyé (aucun mot de passe en dur, clés IA vides) + `Health-Plus/src/api.js` : purge du stockage local sur 401
+- [x] Matrice de tests 30 vérifications (OK=30) + E2E navigateur : login → jeton → dashboard → logout → jeton réutilisé rejeté (401)
+

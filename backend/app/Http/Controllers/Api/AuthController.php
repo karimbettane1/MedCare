@@ -19,7 +19,7 @@ class AuthController extends Controller
         $validated = $request->validate([
             'name' => ['required', 'string', 'max:255'],
             'email' => ['required', 'email', 'max:255', 'unique:users,email'],
-            'password' => ['required', 'string', 'min:6'],
+            'password' => ['required', 'string', 'min:8', 'max:72'],
             'phone' => ['nullable', 'string', 'max:20'],
             'gender' => ['nullable', 'in:male,female,private'],
             'role' => ['nullable', 'in:patient,doctor'],
@@ -83,6 +83,7 @@ class AuthController extends Controller
             'name' => $user->name,
             'email' => $user->email,
             'role' => $role,
+            'token' => $user->createToken('medcare')->plainTextToken,
         ];
 
         // Include doctor_id if doctor
@@ -106,15 +107,10 @@ class AuthController extends Controller
 
         $user = User::where('email', $validated['email'])->first();
 
-        if (! $user) {
+        // Message unique : une réponse différenciée révélerait les emails existants.
+        if (! $user || ! Hash::check($validated['password'], $user->password)) {
             return response()->json([
-                'message' => 'Utilisateur introuvable.',
-            ], 404);
-        }
-
-        if (! Hash::check($validated['password'], $user->password)) {
-            return response()->json([
-                'message' => 'Mot de passe incorrect.',
+                'message' => 'Email ou mot de passe incorrect.',
             ], 401);
         }
 
@@ -127,6 +123,7 @@ class AuthController extends Controller
             'phone' => $user->phone,
             'gender' => $user->gender,
             'role' => $role,
+            'token' => $user->createToken('medcare')->plainTextToken,
         ];
 
         // Include doctor_id if the user is a doctor
@@ -183,7 +180,7 @@ class AuthController extends Controller
         $validated = $request->validate([
             'email' => ['required', 'email'],
             'token' => ['required', 'string'],
-            'password' => ['required', 'string', 'min:6'],
+            'password' => ['required', 'string', 'min:8', 'max:72'],
         ]);
 
         // Find the token in the database
@@ -223,21 +220,23 @@ class AuthController extends Controller
     }
 
     /**
+     * Révoque le jeton utilisé par la requête courante.
+     */
+    public function logout(Request $request): JsonResponse
+    {
+        $request->user()->currentAccessToken()?->delete();
+
+        return response()->json([
+            'message' => 'Déconnexion réussie.',
+        ]);
+    }
+
+    /**
      * Get the currently logged-in user's profile.
      */
     public function profile(Request $request): JsonResponse
     {
-        $userId = $request->input('user_id');
-
-        if (! $userId) {
-            return response()->json(['message' => 'user_id requis.'], 400);
-        }
-
-        $user = User::with(['doctorProfile', 'patientProfile'])->find($userId);
-
-        if (! $user) {
-            return response()->json(['message' => 'Utilisateur introuvable.'], 404);
-        }
+        $user = $request->user()->load(['doctorProfile', 'patientProfile']);
 
         $data = [
             'id' => $user->id,
@@ -282,23 +281,13 @@ class AuthController extends Controller
      */
     public function updateProfile(Request $request): JsonResponse
     {
-        $userId = $request->input('user_id');
-
-        if (! $userId) {
-            return response()->json(['message' => 'user_id requis.'], 400);
-        }
-
-        $user = User::find($userId);
-
-        if (! $user) {
-            return response()->json(['message' => 'Utilisateur introuvable.'], 404);
-        }
+        $user = $request->user();
 
         $validated = $request->validate([
             'first_name' => ['nullable', 'string', 'max:255'],
             'last_name' => ['nullable', 'string', 'max:255'],
             'phone' => ['nullable', 'string', 'max:20'],
-            'email' => ['nullable', 'email', 'max:255'],
+            'email' => ['nullable', 'email', 'max:255', 'unique:users,email,' . $user->id],
         ]);
 
         if (isset($validated['first_name']) || isset($validated['last_name'])) {

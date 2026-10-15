@@ -35,4 +35,24 @@ return [
         ],
     ],
 
+    /*
+    |--------------------------------------------------------------------------
+    | Assistants médicaux (proxy de l'API /chat)
+    |--------------------------------------------------------------------------
+    |
+    | Les clés sont lues via config() et non env() : la configuration est mise
+    | en cache en production, où env() renverrait null.
+    |
+    */
+
+    'groq' => [
+        'key' => env('GROQ_API_KEY'),
+        'model' => env('GROQ_MODEL', 'openai/gpt-oss-120b'),
+    ],
+
+    'openrouter' => [
+        'key' => env('OPENROUTER_API_KEY'),
+        'model' => env('OPENROUTER_MODEL', 'openai/gpt-3.5-turbo'),
+    ],
+
 ];

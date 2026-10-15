@@ -4,21 +4,34 @@ namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
 use App\Models\MedicalRecord;
+use App\Models\User;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 
 class MedicalRecordController extends Controller
 {
+    /**
+     * Identifiant du profil médecin connecté (null si l'utilisateur n'est pas médecin).
+     */
+    private function currentDoctorId(Request $request): ?int
+    {
+        $user = $request->user();
+
+        return $user->role === 'doctor' ? $user->doctorProfile?->id : null;
+    }
+
     public function index(Request $request): JsonResponse
     {
+        $user = $request->user();
+        $doctorId = $this->currentDoctorId($request);
+
         $query = MedicalRecord::query()->with(['patient', 'doctor.user']);
 
-        if ($request->filled('patient_id')) {
-            $query->where('patient_id', (int) $request->input('patient_id'));
-        }
-
-        if ($request->filled('doctor_id')) {
-            $query->where('doctor_id', (int) $request->input('doctor_id'));
+        // Un médecin ne voit que les dossiers qu'il a rédigés ; un patient ne voit que les siens.
+        if ($user->role === 'doctor') {
+            $query->where('doctor_id', $doctorId ?? 0);
+        } else {
+            $query->where('patient_id', $user->id);
         }
 
         $records = $query
@@ -53,10 +66,17 @@ class MedicalRecordController extends Controller
 
     public function store(Request $request): JsonResponse
     {
+        $doctorId = $this->currentDoctorId($request);
+
+        if (! $doctorId) {
+            return response()->json([
+                'message' => 'Seuls les médecins peuvent créer un dossier médical.',
+            ], 403);
+        }
+
         $validated = $request->validate([
             'appointment_id' => ['nullable', 'integer', 'exists:appointments,id'],
             'patient_id' => ['required', 'integer', 'exists:users,id'],
-            'doctor_id' => ['required', 'integer', 'exists:doctors,id'],
             'age' => ['nullable', 'integer', 'min:0'],
             'taille' => ['nullable', 'numeric', 'min:0'],
             'poids' => ['nullable', 'numeric', 'min:0'],
@@ -69,7 +89,16 @@ class MedicalRecordController extends Controller
             'price' => ['required', 'numeric', 'min:0'],
         ]);
 
-        $record = MedicalRecord::create($validated);
+        if (! User::where('id', $validated['patient_id'])->where('role', 'patient')->exists()) {
+            return response()->json([
+                'message' => "Le dossier ne peut concerner qu'un patient.",
+            ], 422);
+        }
+
+        $record = MedicalRecord::create([
+            ...$validated,
+            'doctor_id' => $doctorId,
+        ]);
 
         return response()->json([
             'message' => 'Dossier médical créé avec succès.',
@@ -79,10 +108,17 @@ class MedicalRecordController extends Controller
 
     public function update(Request $request, MedicalRecord $medicalRecord): JsonResponse
     {
+        $doctorId = $this->currentDoctorId($request);
+
+        // Ni la réattribution du dossier, ni la lecture chez un confrère ne sont autorisées.
+        if (! $doctorId || (int) $medicalRecord->doctor_id !== $doctorId) {
+            return response()->json([
+                'message' => 'Vous ne pouvez pas modifier ce dossier médical.',
+            ], 403);
+        }
+
         $validated = $request->validate([
             'appointment_id' => ['nullable', 'integer', 'exists:appointments,id'],
-            'patient_id' => ['required', 'integer', 'exists:users,id'],
-            'doctor_id' => ['required', 'integer', 'exists:doctors,id'],
             'age' => ['nullable', 'integer', 'min:0'],
             'taille' => ['nullable', 'numeric', 'min:0'],
             'poids' => ['nullable', 'numeric', 'min:0'],

@@ -11,3 +11,5 @@
 - [x] Tester endpoints appointments et medical-records (happy path + validations, 15/10/2026)
 - [x] Vérifier persistance DB réelle après inscription/connexion (user + patient_profile créés, login relit la DB)
 - [x] Valider flux complet frontend: inscription -> connexion -> données stockées DB
+- [x] Durcir la sécurité API: Sanctum Bearer + logout, routes protégées, contrôle d'accès par rôle (anti-IDOR), rate limiting, CORS restreint, en-têtes de sécurité, erreurs d'auth génériques, clés IA via `config('services')`
+- [x] Matrice de tests sécurité 30 vérifications (OK=30) sur `artisan serve`
