@@ -1,0 +1,35 @@
+# TODO - Intégration Frontend Health-Plus avec Backend Laravel
+
+- [x] Analyser l'existant frontend/backend
+- [x] Définir le plan d'intégration complet
+- [x] Backend: activer routes API et CORS (`routes/api.php` + `config/cors.php`)
+- [x] Backend: créer migrations (doctors, appointments, medical_records)
+- [x] Backend: créer modèles et relations Eloquent
+- [x] Backend: créer contrôleurs API (auth, doctors, appointments, medical records, chat)
+- [x] Backend: définir endpoints dans routes/api.php
+- [x] Frontend: créer service API centralisé (`src/api.js`)
+- [x] Frontend: connecter Login à l'API
+- [x] Frontend: connecter flux rendez-vous (listing médecins + création)
+- [x] Frontend: connecter DoctorDashboard à l'API
+- [x] Frontend: connecter PatientDashboard à l'API
+- [x] Vérifications/tests des flux critiques (endpoints testés le 15/10/2026: auth, doctors, appointments, medical-records, chat)
+- [x] Finalisation
+- [x] UI: améliorer design page inscription (layout, typographie, spacing)
+- [x] UI: améliorer styles des champs/boutons/états (focus, error, success)
+- [x] UI: corriger textes FR encodés dans inscription
+- [x] UI: améliorer et corriger chat en direct (UX + robustesse réponse API)
+- [x] UI: créer style dédié Chat.css (responsive + bulles)
+- [x] UI: vérifier build React après améliorations inscription/chat (build 15/10/2026: "Compiled successfully", 0 warning)
+- [x] Fix inscription: envoi `photo` en fichier (FormData)
+- [x] Fix inscription: améliorer gestion erreurs API backend (messages de validation affichés dans le formulaire)
+- [x] Fix API: valider réponse JSON sur register/login (pas HTML)
+- [x] Fix API: corriger routage API si fallback web détecté
+- [x] Re-test complet inscription + connexion (via API: register 201, login 200, erreurs 422/401, persistance DB vérifiée)
+- [x] UI: refonte visuelle professionnelle du PatientDashboard
+- [x] UI: harmoniser composants (cartes, boutons, statuts) du PatientDashboard
+- [x] UI: améliorer responsive mobile du PatientDashboard
+- [x] UI: refonte visuelle professionnelle de AppointmentPage
+- [x] UI: améliorer filtres + état vide + grille médecins sur AppointmentPage
+- [x] UI: refonte professionnelle de AppointmentFormPage
+- [x] UI: améliorer structure/ergonomie de AppointmentForm
+- [x] UI: moderniser AppointmentForm.css (responsive + accessibilité visuelle)

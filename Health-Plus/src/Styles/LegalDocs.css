@@ -1,0 +1,120 @@
+.legal-page {
+  min-height: 100vh;
+  padding: 28px 16px 36px;
+  background:
+    radial-gradient(circle at 10% 20%, rgba(59, 130, 246, 0.18), transparent 40%),
+    radial-gradient(circle at 90% 10%, rgba(20, 184, 166, 0.14), transparent 35%),
+    linear-gradient(135deg, #f0f9ff 0%, #f8fafc 45%, #ecfeff 100%);
+  font-family: "Inter", "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+}
+
+.legal-hero {
+  max-width: 980px;
+  margin: 0 auto 18px;
+  text-align: center;
+}
+
+.legal-siteTitle {
+  margin: 0;
+}
+
+.legal-siteTitle a {
+  text-decoration: none;
+  color: #0f172a;
+  font-size: clamp(2rem, 4vw, 2.8rem);
+  font-weight: 800;
+  letter-spacing: -0.02em;
+}
+
+.legal-siteSign {
+  color: #14b8a6;
+  font-family: 'Poppins', sans-serif;
+  font-size: 1.1em;
+  font-weight: 800;
+}
+
+.legal-hero-subtitle {
+  margin: 10px auto 0;
+  color: #475569;
+  font-size: 0.98rem;
+  line-height: 1.5;
+  max-width: 760px;
+}
+
+.legal-card {
+  max-width: 980px;
+  margin: 0 auto;
+  background: rgba(255, 255, 255, 0.94);
+  backdrop-filter: blur(8px);
+  border: 1px solid rgba(255, 255, 255, 0.85);
+  border-radius: 22px;
+  box-shadow: 0 22px 55px rgba(2, 6, 23, 0.14);
+  overflow: hidden;
+}
+
+.legal-text-content {
+  padding: 26px 28px 14px;
+}
+
+.legal-block {
+  padding: 18px 0;
+  border-bottom: 1px solid #e2e8f0;
+}
+
+.legal-block:last-child {
+  border-bottom: none;
+  padding-bottom: 8px;
+}
+
+.legal-title {
+  margin: 0 0 10px 0;
+  color: #0f172a;
+  font-size: clamp(1.2rem, 2.4vw, 1.55rem);
+  font-weight: 800;
+  letter-spacing: -0.01em;
+}
+
+.legal-description {
+  margin: 0;
+  color: #334155;
+  font-size: 1rem;
+  line-height: 1.78;
+}
+
+.legal-footer {
+  padding: 16px 28px 22px;
+  border-top: 1px solid #e2e8f0;
+  background: linear-gradient(180deg, rgba(248, 250, 252, 0.9), rgba(241, 245, 249, 0.9));
+  color: #475569;
+  text-align: center;
+  font-size: 0.92rem;
+  font-weight: 600;
+}
+
+@media (max-width: 760px) {
+  .legal-page {
+    padding: 20px 12px 26px;
+  }
+
+  .legal-card {
+    border-radius: 16px;
+  }
+
+  .legal-text-content {
+    padding: 18px 16px 6px;
+  }
+
+  .legal-title {
+    font-size: 1.12rem;
+  }
+
+  .legal-description {
+    font-size: 0.95rem;
+    line-height: 1.65;
+  }
+
+  .legal-footer {
+    padding: 14px 14px 16px;
+    font-size: 0.86rem;
+  }
+}

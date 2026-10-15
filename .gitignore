@@ -1,0 +1,7 @@
+# Sauvegarde locale de l'historique amont (clone de Alkaison/Health-Plus) : non publié
+/.upstream-git-backup/
+
+# Système / éditeur
+.DS_Store
+Thumbs.db
+desktop.ini

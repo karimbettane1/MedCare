@@ -1,0 +1,285 @@
+.doctor-section {
+    padding: 32px;
+    margin: 0 0 32px 0;
+    text-align: center;
+    background-color: white;
+}
+.dt-title-content {
+    margin: 0 0 64px 0;
+}
+.dt-title {
+    font-family: 'Poppins', sans-serif;
+    font-size: 40px;
+    font-weight: bold;
+    letter-spacing: .7px;
+}
+.dt-title > span {
+    position: relative;
+}
+.dt-title span::before {
+    content: '';
+    position: absolute;
+    width: 64%;
+    height: 4px;
+    background-color: #9D2553;
+    border-radius: 8px;
+    left: 0;
+    bottom: -12px;
+}
+.dt-description {
+    margin: 64px auto 0;
+    text-align: center;
+    color: rgb(77, 75, 75);
+    font-family: 'Rubik', sans-serif;
+    font-size: 20px;
+    letter-spacing: .8px;
+    line-height: 1.8rem;
+}
+/* Doctor Cards */
+.dt-cards-content {
+    width: 100%;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    align-items: stretch;
+    gap: 24px;
+}
+.dt-card {
+    width: 100%;
+    max-width: 320px;
+    min-height: 490px;
+    text-align: left;
+    font-family: 'Inter', sans-serif;
+    background: linear-gradient(180deg, #ffffff, #f9fcff);
+    border-radius: 20px;
+    box-shadow: 0 16px 36px rgba(15, 23, 42, 0.10);
+    transition: transform 0.25s ease, box-shadow 0.25s ease, border-color 0.25s ease;
+    border: 1px solid #dfeaf7;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    position: relative;
+}
+.dt-card::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    border-radius: 20px;
+    box-shadow: inset 0 0 0 1px rgba(255,255,255,0.7);
+    pointer-events: none;
+}
+.dt-card:hover {
+    transform: translateY(-7px);
+    box-shadow: 0 24px 48px rgba(15, 23, 42, 0.16);
+    border-color: #c9ddf5;
+}
+.dt-card-media {
+    position: relative;
+}
+.dt-card-media::after {
+    content: "";
+    position: absolute;
+    inset: auto 0 0 0;
+    height: 64px;
+    background: linear-gradient(180deg, rgba(15,23,42,0), rgba(15,23,42,0.25));
+    pointer-events: none;
+}
+.dt-card-badge {
+    position: absolute;
+    top: 12px;
+    left: 12px;
+    background: #16a34a;
+    color: #fff;
+    font-size: 12px;
+    font-weight: 700;
+    padding: 6px 10px;
+    border-radius: 999px;
+    box-shadow: 0 8px 18px rgba(22, 163, 74, 0.32);
+    transition: background-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.dt-card-badge.unavailable {
+    background: #dc2626;
+    box-shadow: 0 8px 18px rgba(220, 38, 38, 0.35);
+}
+.dt-card-img {
+    width: 100%;
+    height: 220px;
+    object-fit: cover;
+}
+
+.dt-card-avatar-fallback {
+    height: 220px;
+    width: 100%;
+    display: grid;
+    place-items: center;
+    background: linear-gradient(135deg, #1d4ed8 0%, #0ea5e9 60%, #14b8a6 100%);
+    color: #ffffff;
+    font-size: 56px;
+    font-weight: 800;
+    letter-spacing: 1px;
+}
+.dt-card-body {
+    padding: 16px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    flex: 1;
+}
+.dt-card-top {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+}
+.dt-card-name {
+    margin: 0;
+    font-size: 20px;
+    font-weight: 800;
+    letter-spacing: 0;
+    color: #0f172a;
+}
+.dt-card-title {
+    margin: 0;
+    color: #2563eb;
+    font-size: 14px;
+    font-weight: 700;
+}
+.dt-card-specialty-city {
+    margin: 2px 0 0 0;
+    color: #334155;
+    font-size: 13px;
+    line-height: 1.55;
+}
+.dt-card-specialty-city .label {
+    color: #64748b;
+    font-weight: 700;
+    margin-right: 4px;
+}
+.dt-card-specialty-city .dot {
+    margin: 0 8px;
+    color: #94a3b8;
+}
+.dt-card-stars {
+    margin: 2px 0 4px;
+    font-size: 15px;
+    font-weight: 700;
+    color: #f59e0b;
+}
+
+.dt-card-meta {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+}
+
+.dt-card-meta-chip {
+    display: inline-flex;
+    align-items: center;
+    background: #eef6ff;
+    color: #1e3a8a;
+    border: 1px solid #d4e6ff;
+    border-radius: 999px;
+    padding: 6px 10px;
+    font-size: 12px;
+    font-weight: 700;
+    line-height: 1.2;
+}
+.dt-card-reviews {
+    color: #94a3b8;
+    font-size: 13px;
+    font-weight: 600;
+}
+.dt-card-actions {
+    margin-top: auto;
+    display: grid;
+    gap: 10px;
+}
+/* Book Button */
+.book-btn {
+    width: 100%;
+    padding: 12px 14px;
+    background: linear-gradient(135deg, #1d4ed8 0%, #0284c7 55%, #06b6d4 100%);
+    color: white;
+    border: none;
+    border-radius: 10px;
+    font-family: 'Inter', sans-serif;
+    font-size: 14px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: all 0.25s ease;
+    box-shadow: 0 10px 20px rgba(30, 64, 175, 0.24);
+}
+.book-btn:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 14px 24px rgba(30, 64, 175, 0.32);
+}
+.rate-btn {
+    width: 100%;
+    padding: 11px 14px;
+    border: 1px solid #d7e3f2;
+    border-radius: 10px;
+    background: #f8fbff;
+    color: #1e3a8a;
+    font-weight: 700;
+    font-size: 14px;
+    cursor: pointer;
+}
+.rate-btn:hover {
+    background: #eef5ff;
+    border-color: #bfd4ee;
+}
+.rate-btn.disabled {
+    opacity: 0.65;
+    cursor: not-allowed;
+}
+.rate-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    padding-top: 2px;
+}
+.star-rate-btn {
+    border: 1px solid #d7dee8;
+    background: #fff;
+    color: #334155;
+    padding: 6px 10px;
+    border-radius: 8px;
+    font-weight: 700;
+    cursor: pointer;
+}
+.star-rate-btn:hover:not(:disabled) {
+    background: #fffbeb;
+    border-color: #f59e0b;
+    color: #b45309;
+}
+
+/* Responsive */
+@media screen and (max-width: 700px) {
+    .dt-title {
+        font-size: 32px;
+    }
+    .dt-description {
+        margin: 48px 0 0;
+        font-size: 18px;
+    }
+    .dt-cards-content {
+        gap: 24px;
+    }
+    .dt-card {
+        max-width: 100%;
+        min-height: 470px;
+    }
+
+    .dt-card-body {
+        padding: 14px;
+    }
+
+    .dt-card-name {
+        font-size: 19px;
+    }
+
+    .dt-card-meta-chip {
+        font-size: 11px;
+        padding: 5px 9px;
+    }
+}
