@@ -158,3 +158,23 @@
     padding: 15px 16px;
   }
 }
+.demo-notice {
+  margin-top: 22px;
+  padding: 14px 16px;
+  border: 1px dashed #93c5fd;
+  border-radius: 12px;
+  background: #eff6ff;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  font-size: 0.85rem;
+  color: #1e40af;
+}
+
+.demo-notice strong {
+  font-size: 0.9rem;
+}
+
+.demo-notice span {
+  font-family: monospace;
+}

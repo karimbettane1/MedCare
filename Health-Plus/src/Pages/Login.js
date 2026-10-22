@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { useNavigate, Link } from 'react-router-dom';
 import { toast } from "react-toastify";
 import "../Styles/Login.css";
-import { api } from "../api";
+import { api, isDemoMode } from "../api";
 import BackButton from "../Components/BackButton";
 
 function Login() {
@@ -106,6 +106,14 @@ function Login() {
             Pas encore de compte ? <Link to="/inscription">S'inscrire</Link>
           </p>
         </div>
+
+        {isDemoMode && (
+          <div className="demo-notice">
+            <strong>Comptes démo</strong>
+            <span>Patient : patient@healthplus.test / password123</span>
+            <span>Médecin : doctor@healthplus.test / password123</span>
+          </div>
+        )}
       </div>
     </div>
   );

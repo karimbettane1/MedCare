@@ -1,4 +1,12 @@
-const API_BASE_URL = (process.env.REACT_APP_API_URL || "http://127.0.0.1:8000/api/v1").replace(/\/+$/, "");
+// Sans REACT_APP_API_URL (ex: site statique sur GitHub Pages), l'API Laravel est
+// injoignable : on bascule alors sur une couche démo stockée dans le navigateur.
+import { createDemoApi } from "./demoApi";
+
+const envApiUrl = (process.env.REACT_APP_API_URL || "").replace(/\/+$/, "");
+
+export const isDemoMode = !envApiUrl;
+
+const API_BASE_URL = envApiUrl || "http://127.0.0.1:8000/api/v1";
 
 async function request(endpoint, options = {}) {
   const token = localStorage.getItem('token');
@@ -53,7 +61,7 @@ async function request(endpoint, options = {}) {
     });
 }
 
-export const api = {
+const httpApi = {
   register: (body) => {
     const isFormData = typeof FormData !== "undefined" && body instanceof FormData;
 
@@ -190,3 +198,5 @@ export const api = {
       body: JSON.stringify(body),
     }),
 };
+
+export const api = isDemoMode ? createDemoApi() : httpApi;
